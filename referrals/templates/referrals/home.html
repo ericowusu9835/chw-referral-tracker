@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Referrals</title>
+<style>
+body { background: #111111; color: white; font-family: Arial; margin: 0; padding: 20px; }
+.top { background: black; border: 2px solid gold; padding: 20px; text-align: center; border-radius: 15px; }
+.top h1 { color: #D4AF37; margin: 0; }
+.top p { color: #ccc; }
+.btn { background: #D4AF37; color: black; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 10px; }
+.card { background: #1a1a1a; border: 1px solid #D4AF37; padding: 15px; margin-top: 15px; border-radius: 12px; }
+.card h3 { color: #D4AF37; margin: 0; }
+.card p { color: #ddd; margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<div class="top">
+<h1>MY REFERRALS</h1>
+<p>Gold and Black Edition</p>
+<a class="btn" href="/admin/">+ Add New Referral</a>
+</div>
+
+{% for r in referrals %}
+<div class="card">
+<h3>{{ r }}</h3>
+<p>{{ r.created_at }}</p>
+</div>
+{% empty %}
+<div class="card">
+<h3>No referrals yet</h3>
+<p>Click Add New Referral to add your first one.</p>
+</div>
+{% endfor %}
+
+</body>
+</html>
