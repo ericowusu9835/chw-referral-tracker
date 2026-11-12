@@ -1,0 +1,46 @@
+# Test Plan - CHW Referral Tracker
+
+## 1. What We Tested
+- Referral creation
+- Referral list and search
+- Status update
+- SMS notification
+
+## 2. Test Cases
+
+### TC1 - Create Referral
+- Action: Fill form with patient_name, age, community, phone, symptoms and submit
+- Expected: Referral is saved and appears in the list
+- Result: PASS
+
+### TC2 - View All Referrals
+- Action: Open the referrals list page
+- Expected: All referrals are shown
+- Result: PASS
+
+### TC3 - Search by Community
+- Action: Search for "Madina"
+- Expected: Only referrals from Madina are shown
+- Result: PASS
+
+### TC4 - Update Status
+- Action: Change status from Pending to Referred
+- Expected: Status updates correctly
+- Result: PASS
+
+### TC5 - SMS Notification
+- Action: Create a new referral
+- Expected: SMS is sent to clinic via Arkesel API
+- Result: PASS - tested with mock / Arkesel API
+
+### TC6 - Serious Referral
+- Action: Create referral with is_serious = True
+- Expected: Referral is marked as serious
+- Result: PASS
+
+## 3. How We Ran Tests
+Command used:
+python manage.py test
+
+## 4. Summary
+All 6 test cases passed. The system is ready for demo.
