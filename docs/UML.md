@@ -7,6 +7,7 @@ Actor: Community Health Worker (CHW)
 - CHW -> Update Status
 - CHW -> Add Medicine
 - System -> Send SMS to Clinic
+- Send whatspp messages to nurse
 
 ## Class Diagram
 Referral
