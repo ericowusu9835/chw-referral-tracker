@@ -35,3 +35,4 @@ Prescription
 3. System calls Arkesel SMS API
 4. Clinic receives SMS
 5. System shows success page
+6. nurses receives WhatsApp messages
