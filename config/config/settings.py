@@ -21,6 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-vb$#lp&q8#vxmp&o)gc1njmcet@auniynr=s2hj+_xs_9h6g&0'
+ARKESEL_API_KEY = "PASTE_YOUR_KEY_HERE"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -125,3 +126,4 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+ARKESEL_API_KEY = "PASTE_YOUR_KEY_HERE"

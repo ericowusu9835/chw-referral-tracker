@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📊 Dashboard - CHW Referral Tracker</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f766e 0%,#0891b2 40%,#1e3a8a 100%);min-height:100vh;color:white}
+  .header{text-align:center;padding:28px 15px 8px}
+  .header h1{font-size:32px;margin:8px 0 4px}
+  .header p{opacity:.92}
+  .cards{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:16px}
+  .card{background:#fff;color:#111;border-radius:16px;padding:18px;width:170px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+  .card .icon{font-size:34px}
+  .card .num{font-size:28px;font-weight:800;margin:6px 0 2px}
+  .card .label{font-size:13px;color:#555}
+  .box{background:#fff;color:#111;margin:8px 15px 24px;border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+  .box h3{margin:0 0 12px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:14px}
+  th{background:#f0f9ff}
+  .bar-bg{background:#eee;height:20px;border-radius:10px;overflow:hidden}
+  .bar-fill{background:#0f766e;height:100%}
+  .btn{display:inline-block;background:#fff;color:#0f766e;padding:10px 18px;border-radius:10px;text-decoration:none;font-weight:700;margin:5px}
+  .footer{text-align:center;opacity:.85;padding:0 15px 24px;font-size:13px}
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>📊 Dashboard</h1>
+    <p>See everything at a glance</p>
+    <a class="btn" href="/tracker/">⬅ Back to Tracker</a>
+    <a class="btn" href="/admin/">Admin</a>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="icon">📋</div><div class="num">{{ total }}</div><div class="label">Total</div></div>
+    <div class="card"><div class="icon">✅</div><div class="num">{{ completed }}</div><div class="label">Completed</div></div>
+    <div class="card"><div class="icon">⏳</div><div class="num">{{ referred }}</div><div class="label">Referred / Pending</div></div>
+    <div class="card"><div class="icon">❌</div><div class="num">{{ rejected }}</div><div class="label">Rejected</div></div>
+    <div class="card"><div class="icon">🚨</div><div class="num">{{ serious }}</div><div class="label">Serious Cases</div></div>
+  </div>
+
+  <div class="box">
+    <h3>🌍 Referrals by Community</h3>
+    <table>
+      <tr><th>Community</th><th>Count</th><th>Bar</th></tr>
+      {% for item in by_community %}
+      <tr>
+        <td><b>{{ item.community }}</b></td>
+        <td>{{ item.count }}</td>
+        <td>
+          <div class="bar-bg">
+            <div class="bar-fill" data-width="{% widthratio item.count total 100 %}" style="width: 0;"></div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">No data yet</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="box">
+    <h3>📱 Referrals by Status</h3>
+    <table>
+      <tr><th>Status</th><th>Count</th></tr>
+      {% for item in by_status %}
+      <tr><td><b>{{ item.status }}</b></td><td>{{ item.count }}</td></tr>
+      {% empty %}
+      <tr><td colspan="2">No data yet</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="footer">❤️ Made for CHWs • 🚑 Fast Referrals Save Lives</div>
+</body>
+</html>

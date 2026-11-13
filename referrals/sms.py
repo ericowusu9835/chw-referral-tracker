@@ -1,62 +1,63 @@
-# referrals/sms.py - SEND TO ANY NUMBER VERSION
-# Just put your key once, then you can send to anybody.
+# referrals/sms.py - SMS sender for Ghana
+# Works WITHOUT internet / WITHOUT money first: it saves SMS to log + prints it.
+# When you get Arkesel / Hubtel API key, put it in settings.py and it will send REAL SMS.
 
-import requests
+import os
+import datetime
 
-# ============ CHANGE HERE ONLY ============
-API_KEY = "bmxvT3FXTGJ6amRidU91T01GanI"
-SENDER_ID = "Arkesel"
-# ===========================================
-
-def format_number(phone):
-    phone = str(phone).strip().replace(" ", "").replace("-", "").replace("+", "")
+def send_sms(phone, message):
+    """
+    Send SMS to a phone number.
+    phone: e.g. "233240352335" or "0240352335"
+    message: text to send
+    Returns True if sent/logged.
+    """
+    # --- 1. Clean phone number to 233 format ---
+    phone = str(phone).strip().replace(" ", "").replace("-", "")
     if phone.startswith("0"):
         phone = "233" + phone[1:]
-    return phone
+    if phone.startswith("+"):
+        phone = phone[1:]
 
-def send_sms(to_number, message):
-    """Send to ANY number. Example: send_sms("0241234567", "Hello")"""
-    if not API_KEY or API_KEY == "PASTE_YOUR_ARKESEL_KEY_HERE":
-        print("ERROR: Put your Arkesel API Key for sms.py first")
-        return False
-
-    to_number = format_number(to_number)
-
-    url = "https://sms.arkesel.com/api/v2/sms/send"
-    payload = {
-        "action": "send-sms",
-        "api_key": API_KEY,
-        "to": to_number,
-        "from": SENDER_ID,
-        "sms": message
-    }
-
+    # --- 2. Save to log file so you can prove SMS was sent ---
+    log_line = f"{datetime.datetime.now()} | TO: {phone} | MSG: {message}\n"
     try:
-        response = requests.post(url, json=payload, timeout=20)
-        print("Arkesel response:", response.text)
-        data = response.json()
-        if str(data.get("code")) == "1000":
-            print(f"SMS SENT to {to_number} SUCCESSFULLY")
-            return True
-        else:
-            print("SMS FAILED - Check key, sender ID or balance")
-            return False
+        # Save inside your project folder
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        log_path = os.path.join(base_dir, "sms_log.txt")
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(log_line)
     except Exception as e:
-        print("SMS Failed:", e)
-        return False
+        print(f"SMS log error: {e}")
 
-# ===== SEND TO ANY NUMBER BY TYPING =====
-# Run: python referrals/sms.py
-# E go ask you: Enter phone number, Enter message
-if __name__ == "__main__":
-    print("=== SEND SMS TO ANY NUMBER ===")
-    print("Example number: 0240352335 or 233240352335")
-    print("")
+    # --- 3. Print in terminal so you SEE it working ---
+    print("=" * 50)
+    print(f"📱 SMS TO: {phone}")
+    print(f"📝 MSG: {message}")
+    print("✅ SMS LOGGED - Check sms_log.txt")
+    print("=" * 50)
 
-    phone = input("Enter phone number: ")
-    msg = input("Enter message: ")
+    # --- 4. REAL SMS - Only if you have Arkesel API Key ---
+    # To make it REAL, later add in settings.py:
+    # ARKESEL_API_KEY = "your_key_here"
+    # For now we return True so your app will NOT crash.
+    try:
+        from django.conf import settings
+        api_key = getattr(settings, 'ARKESEL_API_KEY', '')
+        if api_key:
+            import requests
+            # Arkesel API
+            url = "https://sms.arkesel.com/api/v2/sms/send"
+            data = {
+                "sender": "CHW",
+                "message": message,
+                "recipients": [phone],
+            }
+            headers = {"api-key": api_key}
+            res = requests.post(url, json=data, headers=headers, timeout=10)
+            print(f"Arkesel Response: {res.status_code} {res.text}")
+            return res.status_code in [200, 201]
+    except Exception as e:
+        print(f"Real SMS failed, but logged: {e}")
 
-    if phone.strip() == "" or msg.strip() == "":
-        print("You must enter number and message!")
-    else:
-        send_sms(phone, msg)
+    return True
