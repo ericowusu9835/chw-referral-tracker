@@ -1,30 +1,21 @@
 from django.contrib import admin
 from .models import Referral
-from .sms import send_sms
 
 @admin.register(Referral)
 class ReferralAdmin(admin.ModelAdmin):
-    list_display = ('patient_name', 'is_serious', 'status', 'created_at')
-    list_filter = ('is_serious', 'status')
-    search_fields = ('patient_name', 'community')
-
-    actions = ['mark_as_serious', 'mark_as_normal', 'send_sms_action']
-
-    @admin.action(description="Mark as SERIOUS referral")
-    def mark_as_serious(self, request, queryset):
-        queryset.update(is_serious=True)
-
-    @admin.action(description="Mark as Normal referral")
-    def mark_as_normal(self, request, queryset):
-        queryset.update(is_serious=False)
-
-    @admin.action(description="Send SMS to Clinic")
-    def send_sms_action(self, request, queryset):
-        count = 0
-        for referral in queryset:
-            message = f"New Referral: {referral.patient_name} from {referral.community}. Symptoms: {referral.symptoms}. Phone: {referral.phone}"
-            # Change this to your clinic number
-            clinic_number = "233XXXXXXXXX"
-            if send_sms(clinic_number, message):
-                count += 1
-        self.message_user(request, f"SMS sent for {count} referral(s).")
+    list_display = ('referral_code', 'patient_name', 'community', 'age', 'is_serious', 'status', 'follow_up_done', 'created_at')
+    list_filter = ('status', 'is_serious', 'follow_up_done', 'community')
+    search_fields = ('patient_name', 'phone', 'community', 'referral_code', 'symptoms')
+    list_editable = ('status', 'follow_up_done')
+    readonly_fields = ('created_at',)
+    fieldsets = (
+        ('👤 Patient Info', {
+            'fields': ('patient_name', 'phone', 'age', 'community')
+        }),
+        ('🤒 Medical Info', {
+            'fields': ('symptoms', 'prescription', 'is_serious')
+        }),
+        ('🏥 Referral Info', {
+            'fields': ('referral_code', 'status', 'feedback', 'follow_up_done', 'created_at')
+        }),
+    )
